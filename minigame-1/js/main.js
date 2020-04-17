@@ -7,6 +7,8 @@ import Music from './runtime/music'
 import DataBus from './databus'
 
 let ctx = canvas.getContext('2d')
+let openDataContext = wx.getOpenDataContext()
+let sharedCanvas = openDataContext.canvas
 let databus = new DataBus()
 
 /**
@@ -53,7 +55,7 @@ export default class Main {
    */
   enemyGenerate() {
     if (databus.frame % 20 === 0) {
-      let h = Math.floor(Math.random() * 4 + 1);
+      let h = Math.floor(Math.random() * 6 + 1);
 
       if (h != 1) {
         let enemy = databus.pool.getItemByClass('balloon', Balloon)
@@ -161,15 +163,20 @@ export default class Main {
     if (databus.gameOver) {
      
       this.gameinfo.renderGameOver(ctx, databus.score)
-    
+      ctx.drawImage(sharedCanvas ,0,0);
       if (!this.hasEventBind) {
         this.hasEventBind = true
-        
+        wx.getOpenDataContext().postMessage({
+          cmd:"save",
+          data:databus.score,
+          height:window.innerHeight,
+          width:window.innerWidth
+        });
         canvas.removeEventListener(
           'touchstart',
           this.touchHandler
         )
-
+       
         this.touchHandler = this.touchEventHandler.bind(this)
         canvas.addEventListener('touchstart', this.touchHandler)
       }

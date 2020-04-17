@@ -58,7 +58,7 @@ export default class DataBus {
   removeBullets(bullet) {
     let temp = this.bullets.shift()
 
-    temp.visible = false
+    bullet.visible = false
 
     this.pool.recover('bullet', bullet)
   }
